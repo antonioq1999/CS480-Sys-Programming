@@ -1,3 +1,6 @@
+/*
+* Created by Naotoshi and Antonio
+*/
 #include <stdio.h>
 #include <stdlib.h>
 
