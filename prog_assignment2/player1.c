@@ -16,22 +16,28 @@
 int main()
 {
     int fd; 
+    char compare; 
 
     char *myfifo = "/tmp/myfifo";
 
     mkfifo(myfifo, 0666); 
 
     char arr1[11], arr2[11]; 
+    printf("Please enter a string of 5 and 7s. Limit 10\n");
     while(1){
 
         fd = open(myfifo, O_WRONLY);
-        printf("Please enter a string of 5s and 7s. limit 10\n"); 
-        fgetc(arr2, 11, stdin); 
+        
+        fgets(arr2, 11, stdin); 
 
         // ASCII value for int 5 and string 5 do not compare
-        for(int i=0; i<strlen(arr2); i++){
-            if(arr2[i] != "5" || arr2[i] != "7"){
-                printf("Please enter a valid string of 5s and 7s.\n"); 
+        for(int i=0; i<(strlen(arr2)-1); i++){
+
+            if(arr2[i] == '5' || arr2[i] == '7'){
+
+            }
+            else{
+                printf("Invalid character in string.\n");
             }
         }
         write(fd, arr2, strlen(arr2)+1); 
