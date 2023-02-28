@@ -5,50 +5,55 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-int main()
-{
-    int fd1;
+int main(){
+    char arr[10];
+    char *myfifo = "/tmp/myfifo"; 
+    char lose[1] = "L"; 
+    int len = 0;
+    int fd; 
+    int timer = 1;
+ 
 
-    // FIFO file path
-    char *myfifo = "/tmp/myfifo";
-    char arr1[10] = {0}; 
-    char win[3] = "win"; 
-    char lose[4] = "lose"; 
+    while(1){
 
-    while(1) {
+        fd = open(myfifo, O_RDONLY); 
+        read(fd, arr, sizeof(arr)); 
+        close(fd); 
+        len = strlen(arr);
 
+        if(len == 1){
+            fd = open(myfifo, O_WRONLY); 
+            write(fd, lose, strlen(lose)); 
+            close(fd); 
+            break;
+        } 
+        else{
+            printf("String1: %s\n", arr); 
+            printf("Length1: %d\n", len); 
 
-        // First open in read only and read
-        fd1 = open(myfifo, O_RDONLY);
-        read(fd1, arr1, sizeof(arr1));
-        // Print the read string and close
-        printf("String: %s\n", arr1);
-        close(fd1);
-
-        printf("/*closed the read only*/\n");
-        printf("Player2 will remove 1 number from the string.\n"); 
-        // Overwriting the value at index i with the i+1 index
-        // continues until it hits the string length of in arr1
-        for (int j=0; j < strlen(arr1); j++) {  
-                arr1[j] = arr1[j+1]; 
+            arr[len - 1] = '\0'; 
+            len = strlen(arr); 
+            printf("String2: %s\n", arr); 
+            printf("Length2: %d\n", len); 
+            fd = open(myfifo, O_WRONLY); 
+            write(fd, arr, strlen(arr)); 
+            close(fd); 
+            timer = timer + 1; 
+            sleep(timer); 
         }
-        // Check to see if the index is the null terminator 
-        // Will breakout if the value at arr[0] is not 5 or 7
-        if(arr1[0] == '5' || arr1[0] == '7'){
-            fd1 = open(myfifo,O_WRONLY);
-            write(fd1, arr1, strlen(arr1));
-            close(fd1);
-            printf("\nSending response to Player 1.\n"); 
-            sleep(2); 
-        }
-        else {
-            printf("\nYou lose\n"); 
-            fd1 = open(myfifo,O_WRONLY);
-            printf("\nSending response to Player 1.\n"); 
-            write(fd1, win, strlen(win));
-            close(fd1);
-            return 0; 
-        }
-    } 
-    return 1;
+
+    }
+
+    printf("String3: %s\n", arr);
+    printf("Length3: %d\n", len); 
+
+    if(arr[0] == '5' || arr[0] == '7'){
+        printf("You win!"); 
+    } else {
+        printf("You lose");
+    }
+
+    printf("\nno more characters in the string.\n"); 
+    return 0; 
+
 }
