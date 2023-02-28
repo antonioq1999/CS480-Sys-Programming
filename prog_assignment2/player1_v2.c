@@ -18,9 +18,10 @@ int main(){
     int fd;
     char *myfifo = "/tmp/myfifo"; 
     char arr1[10] = {0}; 
-    
-    mkfifo(myfifo, 0666); 
+    char win[3] = "win"; 
+    char lose[4] = "lose";
 
+    mkfifo(myfifo, 0666); 
     printf("Please enter a string of 5s and 7s.\n Length Limit = 10 \n"); 
     fgets(arr1, 11, stdin); 
 
@@ -51,16 +52,27 @@ int main(){
         printf("String: %s\n", arr1);
         printf("Player1 will reduce the string by 3.\n"); 
 
-        for(int i=0; i<2; i++){
+        for(int i=0; i<3; i++){
             for(int j=0; j<strlen(arr1); j++){
                 arr1[j] = arr1[j+1]; 
             }
         }
-        fd = open(myfifo, O_WRONLY); 
-        printf("\nSending response to Player 2. \n"); 
-        write(fd, arr1, strlen(arr1)); 
-        close(fd); 
+
+        if(arr1[0] == '5' || arr1[0] == '7'){
+            fd = open(myfifo, O_WRONLY); 
+            write(fd, arr1, strlen(arr1)); 
+            close(fd); 
+            printf("Sending response to Player 2.\n");
+            sleep(2); 
+        }
+        else{
+            fd = open(myfifo, O_WRONLY); 
+            printf("\nYou lose.\n"); 
+            write(fd, win, strlen(win)); 
+            close(fd); 
+            return 0; 
+        }
 
     }
-    
+    return 1; 
 }
