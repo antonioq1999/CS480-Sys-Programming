@@ -1,3 +1,9 @@
+/*
+* Created by: Antonio and Naotoshi 
+* Modified: 02/28/2023
+* CS 480 - Systems Programming
+* Assignment #2
+*/
 #include <stdio.h>
 #include <string.h>
 #include <fcntl.h>
