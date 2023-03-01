@@ -1,3 +1,9 @@
+/*
+* Created by: Antonio and Naotoshi 
+* Modified: 02/28/2023
+* CS 480 - Systems Programming
+* Assignment #2
+*/
 #include <stdio.h>
 #include <string.h>
 #include <fcntl.h>
@@ -5,34 +11,55 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-int main()
-{
-    int fd1;
+int main(){
+    char arr[10];
+    char *myfifo = "/tmp/myfifo"; 
+    char lose[1] = "L"; 
+    int len = 0;
+    int fd; 
+    int timer = 1;
+ 
 
-    // FIFO file path
-    char *myfifo = "/tmp/myfifo";
+    while(1){
 
+        fd = open(myfifo, O_RDONLY); 
+        read(fd, arr, sizeof(arr)); 
+        close(fd); 
+        len = strlen(arr);
 
-    char str1[80], str2[80];
-    while(1) 
-    {
-        // First open in read only and read
-        fd1 = open(myfifo,O_RDONLY);
-        read(fd1, str1, 80);
+        if(len == 1){
+            fd = open(myfifo, O_WRONLY); 
+            write(fd, lose, strlen(lose)); 
+            close(fd); 
+            break;
+        } 
+        else{
+            printf("String1: %s\n", arr); 
+            printf("Length1: %d\n", len); 
 
-        // Print the read string and close
-        printf("User1: %s\n", str1);
-        close(fd1);
+            arr[len - 1] = '\0'; 
+            len = strlen(arr); 
+            printf("String2: %s\n", arr); 
+            printf("Length2: %d\n", len); 
+            fd = open(myfifo, O_WRONLY); 
+            write(fd, arr, strlen(arr)); 
+            close(fd); 
+            timer = timer + 1; 
+            sleep(timer); 
+        }
 
-        printf("closed the read only");
-        // Now open in write mode and write
-        // string taken from user.
-        fd1 = open(myfifo,O_WRONLY);
-        printf("taking inputs now");
-        fgets(str2, 80, stdin);
+    }
 
-        write(fd1, str2, strlen(str2)+1);
-        close(fd1);
-    } 
-    return 1;
+    printf("String3: %s\n", arr);
+    printf("Length3: %d\n", len); 
+
+    if(arr[0] == '5' || arr[0] == '7'){
+        printf("You win!"); 
+    } else {
+        printf("You lose");
+    }
+
+    printf("\nno more characters in the string.\n"); 
+    return 0; 
+
 }
